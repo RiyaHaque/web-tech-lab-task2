@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Course Registration</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f0f7f0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: green;
+        }
+
+        form {
+            width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 2px solid blue;
+            border-radius: 8px;
+            background-color: white;
+        }
+
+        label {
+            display: inline-block;
+            width: 120px;
+            margin-bottom: 12px;
+        }
+
+        input, select {
+            margin-bottom: 5px;
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-left: 120px;
+            display: block;
+        }
+
+        button {
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        #count {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: white;
+            width: 70%;
+        }
+
+        th, td {
+            border: 1px solid gray;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: lightgreen;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Course Registration</h1>
+
+    <form id="regForm" method="post" action="#"
+          novalidate onsubmit="return validateForm()">
+
+        <label for="fname">Full Name</label>
+        <input type="text" id="fname" required minlength="3">
+        <span id="err-fname" class="error"></span>
+
+        <label for="sid">AIUB ID</label>
+        <input type="text" id="sid" required
+               pattern="[0-9]{2}-[0-9]{5}-[0-9]">
+        <span id="err-sid" class="error"></span>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" required>
+        <span id="err-email" class="error"></span>
+
+        <label for="credits">Credits</label>
+        <input type="number" id="credits" required min="9" max="15">
+        <span id="err-credits" class="error"></span>
+
+        <label for="course">Course</label>
+        <select id="course" required>
+            <option value="">Select a course</option>
+            <option value="Web Technologies">Web Technologies</option>
+            <option value="Software Engineering">Software Engineering</option>
+            <option value="Database Systems">Database Systems</option>
+            <option value="Computer Networks">Computer Networks</option>
+        </select>
+        <span id="err-course" class="error"></span>
+
+        <label>Class time</label>
+        <input type="radio" id="shift-morning" name="shift" value="Morning">
+        <label for="shift-morning" style="width:auto">Morning</label>
+
+        <input type="radio" id="shift-evening" name="shift" value="Evening">
+        <label for="shift-evening" style="width:auto">Evening</label>
+
+        <span id="err-shift" class="error"></span>
+
+        <br>
+
+        <label for="agree">Confirmation</label>
+        <input type="checkbox" id="agree" required>
+        I confirm the course advice
+        <span id="err-agree" class="error"></span>
+
+        <br><br>
+
+        <label for="pass">Password</label>
+        <input type="password" id="pass" required minlength="6">
+        <span id="err-pass" class="error"></span>
+
+        <label for="pass2">Confirm Password</label>
+        <input type="password" id="pass2" required>
+        <span id="err-pass2" class="error"></span>
+
+        <br>
+
+        <button type="submit">Register Course</button>
+
+    </form>
+
+
+    <p id="count">Total registrations: 0</p>
+
+    <table id="list">
+
+        <tr>
+            <th>Name</th>
+            <th>ID</th>
+            <th>Course</th>
+            <th>Credits</th>
+            <th>Action</th>
+        </tr>
+
+    </table>
+
+
+    <script>
+
+        let registrations = [];
+
+        function validateForm() {
+
+            
+
+            let name = document.getElementById("fname").value.trim();
+            let id = document.getElementById("sid").value;
+            let email = document.getElementById("email").value;
+            let credits = document.getElementById("credits").value;
+            let course = document.getElementById("course").value;
+            let password = document.getElementById("pass").value;
+            let confirmPassword = document.getElementById("pass2").value;
+
+            let morning = document.getElementById("shift-morning").checked;
+            let evening = document.getElementById("shift-evening").checked;
+            let agree = document.getElementById("agree").checked;
+
+            let valid = true;
+
+
+            
+
+            let errors = document.querySelectorAll(".error");
+
+            for (let i = 0; i < errors.length; i++) {
+                errors[i].innerHTML = "";
+            }
+
+
+            
+
+            if (name.length < 3) {
+                document.getElementById("err-fname").innerHTML =
+                    "Name must have at least 3 characters";
+                valid = false;
+            }
+
+
+            
+
+            let idPattern = /^[0-9]{2}-[0-9]{5}-[0-9]$/;
+
+            if (!idPattern.test(id)) {
+                document.getElementById("err-sid").innerHTML =
+                    "Enter a valid ID (22-12345-1)";
+                valid = false;
+            }
+
+
+            
+
+            if (!email.includes("@student.aiub.edu") ||
+                email.indexOf("@") < 1 ||
+                !email.endsWith("@student.aiub.edu") ||
+                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+
+                document.getElementById("err-email").innerHTML =
+                    "Email must end with @student.aiub.edu";
+
+                valid = false;
+            }
+
+
+            
+
+            if (credits === "" || Number(credits) < 9 ||
+                Number(credits) > 15) {
+
+                document.getElementById("err-credits").innerHTML =
+                    "Credits must be between 9 and 15";
+
+                valid = false;
+            }
+
+
+            
+            if (course === "") {
+                document.getElementById("err-course").innerHTML =
+                    "Select a course";
+
+                valid = false;
+            }
+
+
+            
+
+            if (!morning && !evening) {
+                document.getElementById("err-shift").innerHTML =
+                    "Choose a class time";
+
+                valid = false;
+            }
+
+
+            
+            if (!agree) {
+                document.getElementById("err-agree").innerHTML =
+                    "You must tick the box";
+
+                valid = false;
+            }
+
+
+           
+
+            if (password.length < 6) {
+                document.getElementById("err-pass").innerHTML =
+                    "Password must have at least 6 characters";
+
+                valid = false;
+            }
+
+
+            
+            if (confirmPassword === "") {
+                document.getElementById("err-pass2").innerHTML =
+                    "Confirm Password is required";
+
+                valid = false;
+            }
+
+            else if (password !== confirmPassword) {
+                document.getElementById("err-pass2").innerHTML =
+                    "Passwords do not match";
+
+                valid = false;
+            }
+
+
+            
+
+            if (!valid) {
+                return false;
+            }
+
+
+            
+
+            let registration = {
+                name: name,
+                id: id,
+                course: course,
+                credits: Number(credits)
+            };
+
+
+            
+
+            registrations.push(registration);
+
+
+            
+
+            let table = document.getElementById("list");
+
+            let row = document.createElement("tr");
+
+
+            
+
+            let cell1 = document.createElement("td");
+            cell1.innerHTML = name;
+            row.appendChild(cell1);
+
+
+            
+            let cell2 = document.createElement("td");
+            cell2.innerHTML = id;
+            row.appendChild(cell2);
+
+
+            
+
+            let cell3 = document.createElement("td");
+            cell3.innerHTML = course;
+            row.appendChild(cell3);
+
+
+            
+
+            let cell4 = document.createElement("td");
+            cell4.innerHTML = credits;
+            row.appendChild(cell4);
+
+
+           
+
+            let cell5 = document.createElement("td");
+
+            let btn = document.createElement("button");
+
+            btn.innerHTML = "Remove";
+
+            btn.type = "button";
+
+            btn.onclick = function() {
+
+                let index = registrations.indexOf(registration);
+
+                registrations.splice(index, 1);
+
+                row.remove();
+
+                updateCount();
+
+            };
+
+            cell5.appendChild(btn);
+
+            row.appendChild(cell5);
+
+
+            // Add row to table
+
+            table.appendChild(row);
+
+
+            
+            updateCount();
+
+
+
+            document.getElementById("regForm").reset();
+
+
+            return false;
+
+        }
+
+       
+
+        function updateCount() {
+
+            document.getElementById("count").innerHTML =
+                "Total registrations: " + registrations.length;
+
+        }
+
+    </script>
+
+</body>
+</html>
